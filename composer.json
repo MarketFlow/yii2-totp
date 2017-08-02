@@ -23,6 +23,6 @@
         }
     },
     "extra": {
-        "bootstrap": "Marketflow\\Yii2\\TOTP\\Bootstrap"
+        "bootstrap": "MarketFlow\\Yii2\\TOTP\\Bootstrap"
     }
 }
