@@ -15,6 +15,7 @@
     ],
     "minimum-stability": "stable",
     "require": {
+        "enygma/gauth": "v0.4",
         "yiisoft/yii2": "*"
     },
     "autoload": {

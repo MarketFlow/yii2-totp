@@ -12,5 +12,5 @@ interface TOTPInterface
      * Returns the TOTP secret
      * @return string
      */
-    public function getSecret(): string;
+    public function getTOTPSecret();
 }
