@@ -21,5 +21,8 @@
         "psr-4": {
             "MarketFlow\\Yii2\\TOTP\\": ["src/"]
         }
+    },
+    "extra": {
+        "bootstrap": "Marketflow\\Yii2\\TOTP\\Bootstrap"
     }
 }
