@@ -1,0 +1,25 @@
+{
+    "name": "marketflow/yii2-totp",
+    "description": "TOTP module for Yii2",
+    "type": "yii2-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joey Claessen",
+            "email": "joey_claessen@hotmail.com"
+        },
+        {
+            "name": "Sam Mousa",
+            "email": "sam@mousa.nl"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "MarketFlow\\Yii2\\TOTP\\": ["src/"]
+        }
+    }
+}
