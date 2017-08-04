@@ -44,9 +44,9 @@ class LoginController extends Controller
             return $this->redirect(\Yii::$app->user->returnUrl);
         }
 
+        $this->layout = $module->totpLayout;
         return $this->render($module->totpView ?? 'totp', [
             'gAuth' => $gAuth,
-            'action' => [$this->module->id . '/' . $this->id, '/totp'],
             'codeParam' => $module->codeParam,
             'model' => $model
         ]);

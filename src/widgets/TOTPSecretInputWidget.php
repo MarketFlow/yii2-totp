@@ -16,7 +16,6 @@ class TOTPSecretInputWidget extends InputWidget
     public function init()
     {
         parent::init();
-        $this->hint = $this->hint ?? \Yii::t('yii2-topt', 'Enter the verification code');
         static::$counter++;
         if (static::$counter > 1) {
             throw new \Exception('You should only use 1 ' . static::class);

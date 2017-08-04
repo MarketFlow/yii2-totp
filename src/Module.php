@@ -4,9 +4,9 @@ namespace MarketFlow\Yii2\TOTP;
 
 use Exception;
 use MarketFlow\Yii2\TOTP\interfaces\TOTPInterface;
+use yii\base\Application;
 use yii\base\ActionEvent;
 use yii\base\Event;
-use yii\web\Application;
 use yii\web\Response;
 use yii\web\Session;
 use yii\web\User;
@@ -17,12 +17,23 @@ use yii\web\User;
  */
 class Module extends \yii\base\Module
 {
+    const EVENT_TOTP_CONFIGURED = 'eventTotpConfigured';
+
     public $codeParam = 'totpCode';
 
     public $sessionPrefix = 'totp';
     public $sessionTOTPDonekey = 'totpDone';
 
     public $totpView;
+    public $totpLayout;
+
+    public function getApplication(\yii\base\Module $module = null): Application {
+        $module = $module ?? $this;
+
+        return $module->module instanceof Application
+            ? $module->module
+            : $this->getApplication($module->module);
+    }
 
     /**
      * @return Response
@@ -52,7 +63,7 @@ class Module extends \yii\base\Module
     {
         parent::init();
 
-        Event::on(Application::class, Application::EVENT_BEFORE_ACTION, function(ActionEvent $event) {
+        $this->getApplication()->on(Application::EVENT_BEFORE_ACTION, function(ActionEvent $event) {
             $user = $this->getUser();
 
             /** @var TOTPInterface $identity */
@@ -75,6 +86,10 @@ class Module extends \yii\base\Module
             }
 
             return $this->getResponse()->redirect([$this->id . '/login/totp']);
+        });
+
+        Event::on(static::class, self::EVENT_TOTP_CONFIGURED, function(Event $event) {
+            $this->setTotpChecked();
         });
     }
 

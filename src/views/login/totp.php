@@ -6,7 +6,6 @@ use yii\widgets\ActiveForm;
 /**
  * @var $this yii\web\View
  * @var \yii\base\DynamicModel $model
- * @var array $action
  * @var string $codeParam
  */
 
