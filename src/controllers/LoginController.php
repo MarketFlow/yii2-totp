@@ -5,7 +5,7 @@ namespace MarketFlow\Yii2\TOTP\controllers;
 use GAuth\Auth;
 use MarketFlow\Yii2\TOTP\interfaces\TOTPInterface;
 use MarketFlow\Yii2\TOTP\Module;
-use yii\web\Application;
+use yii\validators\RequiredValidator;
 use yii\web\Controller;
 
 /**
@@ -29,14 +29,26 @@ class LoginController extends Controller
         $gAuth = new Auth();
         $gAuth->setInitKey($identity->getTOTPSecret());
 
-        if ($request->isPost && $request->getBodyParam($module->codeParam)) {
+        $model = new \yii\base\DynamicModel([
+            $module->codeParam => null
+        ]);
+        $model->addRule([$module->codeParam], RequiredValidator::class);
+        $model->addRule([$module->codeParam], function($attribute, $params, $validator) use ($model, $gAuth) {
+            if (!$gAuth->validateCode($model->{$attribute})) {
+                $model->addError($attribute, \Yii::t('yii2-totp', 'Invalid code'));
+            }
+        });
+
+        if ($request->isPost && $model->load($request->getBodyParams()) && $model->validate()) {
+            $module->setTotpChecked();
             return $this->redirect(\Yii::$app->user->returnUrl);
         }
 
         return $this->render($module->totpView ?? 'totp', [
             'gAuth' => $gAuth,
             'action' => [$this->module->id . '/' . $this->id, '/totp'],
-            'codeParam' => $module->codeParam
+            'codeParam' => $module->codeParam,
+            'model' => $model
         ]);
     }
 }

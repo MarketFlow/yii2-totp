@@ -77,4 +77,9 @@ class Module extends \yii\base\Module
             return $this->getResponse()->redirect([$this->id . '/login/totp']);
         });
     }
+
+    public function setTotpChecked()
+    {
+        $this->getSession()->set($this->sessionPrefix . $this->sessionTOTPDonekey, true);
+    }
 }
