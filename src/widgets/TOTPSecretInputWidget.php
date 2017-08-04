@@ -35,7 +35,7 @@ class TOTPSecretInputWidget extends InputWidget
             200
         );
 
-        $result.= Html::tag('div', Html::img('data:image/png;base64,'.base64_encode($qr)), ['class' => 'text-center']);
+        $result.= Html::tag('div', Html::img('data:image/png;base64,'.base64_encode($qr)), ['class' => 'text-left']);
         $result .= Html::activeHiddenInput($this->model, $this->attribute);
         $result .= Html::textInput('totpCode', null, ['class' => 'form-control', 'style' => ['margin-top' => '10px']]);
 
