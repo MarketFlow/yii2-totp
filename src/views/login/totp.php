@@ -4,9 +4,8 @@ use yii\bootstrap\Html;
 use yii\widgets\ActiveForm;
 
 /**
- * @var $this yii\web\View
- * @var \yii\base\DynamicModel $model
- * @var string $codeParam
+ * @var yii\web\View $this
+ * @var \MarketFlow\Yii2\TOTP\models\SecondFactorForm $model
  */
 
 echo Html::beginTag('div', ['class' => 'row']);
@@ -19,7 +18,11 @@ $form = ActiveForm::begin([
 ]);
 ?>
 
-<?= $form->field($model, $codeParam, []) ?>
+<?= $form->field($model, 'code', []) ?>
+
+<?php if ($model->isAttributeActive('rememberDevice')) { ?>
+    <?= $form->field($model, 'rememberDevice', [])->checkbox() ?>
+<?php } ?>
 
 <div class="form-group">
     <?= Html::submitButton(\Yii::t('yii2-totp', 'Submit'), ['class' => 'btn btn-primary col-xs-12']) ?>

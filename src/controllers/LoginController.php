@@ -3,8 +3,12 @@
 namespace MarketFlow\Yii2\TOTP\controllers;
 
 use GAuth\Auth;
+use MarketFlow\Yii2\TOTP\actions\TOTPAction;
 use MarketFlow\Yii2\TOTP\interfaces\TOTPInterface;
+use MarketFlow\Yii2\TOTP\models\SecondFactorForm;
 use MarketFlow\Yii2\TOTP\Module;
+use yii\validators\BooleanValidator;
+use yii\validators\DefaultValueValidator;
 use yii\validators\RequiredValidator;
 use yii\web\Controller;
 
@@ -14,41 +18,21 @@ use yii\web\Controller;
  */
 class LoginController extends Controller
 {
-    public function actionTotp()
+    public function beforeAction($action)
     {
-        $request = \Yii::$app->request;
-        /** @var TOTPInterface $identity */
-        $identity = \Yii::$app->user->identity;
-        /** @var Module $module */
-        $module = $this->module;
+        return parent::beforeAction($action) && $this->module->totpAction === $action->getUniqueId();
+    }
 
-        if (is_null($identity)) {
-            return $this->goHome();
-        }
-
-        $gAuth = new Auth();
-        $gAuth->setInitKey($identity->getTOTPSecret());
-
-        $model = new \yii\base\DynamicModel([
-            $module->codeParam => null
-        ]);
-        $model->addRule([$module->codeParam], RequiredValidator::class);
-        $model->addRule([$module->codeParam], function($attribute, $params, $validator) use ($model, $gAuth) {
-            if (!$gAuth->validateCode($model->{$attribute})) {
-                $model->addError($attribute, \Yii::t('yii2-totp', 'Invalid code'));
+    public function actions()
+    {
+        return [
+            'totp' => function($id, Controller $controller) {
+                return new TOTPAction($id, $controller, [
+                    'user' => $controller->module->get('user'),
+                    'module' => $controller->module,
+                    'request' => $controller->module->get('request')
+                ]);
             }
-        });
-
-        if ($request->isPost && $model->load($request->getBodyParams()) && $model->validate()) {
-            $module->setTotpChecked();
-            return $this->redirect(\Yii::$app->user->returnUrl);
-        }
-
-        $this->layout = $module->totpLayout;
-        return $this->render($module->totpView ?? 'totp', [
-            'gAuth' => $gAuth,
-            'codeParam' => $module->codeParam,
-            'model' => $model
-        ]);
+        ];
     }
 }
